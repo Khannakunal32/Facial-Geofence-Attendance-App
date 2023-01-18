@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "college-app",
-    "slug": "college-app",
+    "name": "Territory-Attendance",
+    "slug": "TerritoryAttendance",
+    "privacy": "public",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
