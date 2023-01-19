@@ -30,6 +30,7 @@ export default function Trial() {
       if (eventType === LocationGeofencingEventType.Enter) {
         console.log("You've entered region:", region);
         setLocationStatus("You are inside region "+ region.identifier);
+        _askPermission();
         Notifications.scheduleNotificationAsync({
           content: {
             title: "ENTERED GEOFENCE",
@@ -41,10 +42,11 @@ export default function Trial() {
         console.log("You've left region:", region);
         setLocationStatus(
           "You are outside region " +
-            region.identifier +
-            " attendance will not be marked!"
-        );
-        alert("You've left region: ", region.identifier.toUpperCase());
+          region.identifier +
+          " attendance will not be marked!"
+          );
+          _askPermission();
+          alert("You've left region: ", region.identifier.toUpperCase());
         Notifications.scheduleNotificationAsync({
           content: {
             title: "EXITED GEOFENCE",
@@ -76,9 +78,10 @@ export default function Trial() {
     text = JSON.stringify(location.mocked);
     if (text == "true") {
       alert("Mocked location detected.");
-      setTimeout(() => {
-        BackHandler.exitApp();
-      }, 2000);
+      setMsg("Mocked location detected");
+      // setTimeout(() => {
+      //   BackHandler.exitApp();
+      // }, 2000);
       return;
     } else {
       setMsg("Mock Check Successfull");
