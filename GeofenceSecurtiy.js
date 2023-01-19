@@ -10,6 +10,10 @@ export default function Trial() {
     "No information available"
   );
 
+  const [boolInLocation, setBoolInLocation] = useState(false);
+  const [boolNoMock, setBoolNoMock] = useState(false);
+  const [showLoginButton, setShowLoginButton] = useState(false);
+
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -29,7 +33,7 @@ export default function Trial() {
 
       if (eventType === LocationGeofencingEventType.Enter) {
         console.log("You've entered region:", region);
-        setLocationStatus("You are inside region "+ region.identifier);
+        setLocationStatus("You are inside region " + region.identifier);
         _askPermission();
         Notifications.scheduleNotificationAsync({
           content: {
@@ -38,15 +42,18 @@ export default function Trial() {
           },
           trigger: null,
         });
+        setBoolInLocation(true);
       } else if (eventType === LocationGeofencingEventType.Exit) {
+        setBoolInLocation(false);
+        setShowLoginButton(false); 
         console.log("You've left region:", region);
         setLocationStatus(
           "You are outside region " +
-          region.identifier +
-          " attendance will not be marked!"
-          );
-          _askPermission();
-          alert("You've left region: ", region.identifier.toUpperCase());
+            region.identifier +
+            " attendance will not be marked!"
+        );
+        _askPermission();
+        alert("You've left region: ", region.identifier.toUpperCase());
         Notifications.scheduleNotificationAsync({
           content: {
             title: "EXITED GEOFENCE",
@@ -79,14 +86,14 @@ export default function Trial() {
     if (text == "true") {
       alert("Mocked location detected.");
       setMsg("Mocked location detected");
-      // setTimeout(() => {
-      //   BackHandler.exitApp();
-      // }, 2000);
+      setBoolNoMock(false);
+      setShowLoginButton(false);
+
       return;
     } else {
       setMsg("Mock Check Successfull");
+      setBoolNoMock(true);
     }
-    // alert("permission granted");
   };
 
   useEffect(() => {
@@ -129,8 +136,14 @@ export default function Trial() {
     })();
   }, []);
 
-  //   const checkLocationHandler = () => {
-  //   };
+  const checkSystem = async () => {
+    if (boolInLocation && boolNoMock) {
+      setShowLoginButton(true);
+      return;
+    }
+    alert("Get into the region to proceed...")
+    setShowLoginButton(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -141,7 +154,10 @@ export default function Trial() {
       )}
       <Text>{msg}</Text>
       <Text>{locationStatus}</Text>
-      {/* <Button title="Check Location" onPress={checkLocationHandler}></Button> */}
+      <Button title="Check System" onPress={checkSystem}></Button>
+      {showLoginButton ? (
+        <Button title="Sign In" onPress={() => {}}></Button>
+      ) : null}
     </View>
   );
 }
