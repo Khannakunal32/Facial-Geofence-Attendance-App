@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import Geofence from "react-native-expo-geofence";
-import Trial from "./Trial";
+import GeofenceSecurtiy from "./GeofenceSecurtiy";
 import TrialThree from "./TrialThree";
 import TrialTwo from "./TrialTwo";
 
@@ -18,8 +18,8 @@ export default function App() {
     // </ScrollView>
     
     <View style={styles.container} >
-      <Trial></Trial>
-       <TrialTwo></TrialTwo>
+      <GeofenceSecurtiy></GeofenceSecurtiy>
+       {/* <TrialTwo></TrialTwo> */}
        {/* <TrialThree></TrialThree> */}
       </View>
   );

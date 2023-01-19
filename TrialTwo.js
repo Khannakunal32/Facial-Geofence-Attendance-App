@@ -135,6 +135,7 @@ export default function TrialTwo() {
     <View style={styles.container}>
       <Text>Longitude: {position?.longitude}</Text>
       <Text>Latitude: {position?.latitude}</Text>
+      <Text>speed: {position?.speed}</Text>
       <View style={styles.separator} />
       <Button
         onPress={startForegroundUpdate}
