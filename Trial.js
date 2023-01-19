@@ -1,7 +1,7 @@
 // import React, { useState, useEffect } from "react";
 // import { Platform, Text, View, StyleSheet, Button } from "react-native";
 // import Device from "expo-device";
-import * as Location from "expo-location";
+// import * as Location from "expo-location";
 
 // export default function Trial() {
 //   const [location, setLocation] = useState(null);
@@ -91,12 +91,13 @@ import * as Location from "expo-location";
 
 import React, { useEffect, useState } from "react";
 import { BackHandler, Button, StyleSheet, Text, View } from "react-native";
-import {
-  getForegroundPermissionsAsync,
-  requestBackgroundPermissionsAsync,
-  requestForegroundPermissionsAsync,
-  startGeofencingAsync,
-} from "expo-location";
+// import {
+//   getForegroundPermissionsAsync,
+//   requestBackgroundPermissionsAsync,
+//   requestForegroundPermissionsAsync,
+//   startGeofencingAsync,
+// } from "expo-location";
+import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import { LocationGeofencingEventType } from "expo-location";
 import * as TaskManager from "expo-task-manager";
@@ -136,28 +137,97 @@ TaskManager.defineTask(
         },
         trigger: null,
       });
-      setTimeout(() => {
-      BackHandler.exitApp();
-    }, 1000);
+      //   setTimeout(() => {
+      //   BackHandler.exitApp();
+      // }, 1000);
     }
   }
 );
 
 export default function Trial() {
   const [isLoading, setIsLoading] = useState(true);
+  const [msg, setMsg] = useState(null);
+
+  //   useEffect(() => {
+  //     const setUp = async () => {
+  //       const { granted: notificationsGranted } =
+  //         await Notifications.getPermissionsAsync();
+  //       if (!notificationsGranted) {
+  //         await Notifications.requestPermissionsAsync();
+  //       }
+
+  //       //   const { granted: fgGranted } = await getForegroundPermissionsAsync();
+  //       //   if (!fgGranted) {
+  //       //     await requestForegroundPermissionsAsync();
+  //       //     await requestBackgroundPermissionsAsync();
+  //       //   }
+  //       //   else{
+  //       //     setIsLoading(false);
+  //       //   }
+
+  //       let { status } = await requestForegroundPermissionsAsync();
+  //       if (status !== "granted") {
+  //         setErrorMsg("Permission to access location was denied");
+  //         await requestForegroundPermissionsAsync();
+  //         await requestBackgroundPermissionsAsync();
+  //         // console.log("Permission to access location was denied");
+  //         alert("Permission to access location was denied");
+  //         return;
+  //       } else {
+  //         alert("done");
+  //       }
+
+  //       const geofences = [
+  //         {
+  //           identifier: "Stockholm",
+  //           latitude: 59.332598,
+  //           longitude: 18.035258,
+  //           radius: 10000,
+  //           notifyOnEnter: true,
+  //           notifyOnExit: true,
+  //         },
+  //       ];
+  //       await startGeofencingAsync("GEOFENCE_TASK", geofences);
+  //     };
+
+  //     setUp();
+  //   }, []);
+
+  const _askPermission = async () => {
+    try {
+       var location = await Location.getCurrentPositionAsync({});
+    } catch (err) {
+        setMsg(err.message);
+      _askPermission();
+      return;
+    }
+    setIsLoading(false);
+    text = JSON.stringify(location);
+    setMsg(text);
+    // alert("permission granted");
+  };
+
   useEffect(() => {
-    const setUp = async () => {
+    (async () => {
       const { granted: notificationsGranted } =
         await Notifications.getPermissionsAsync();
       if (!notificationsGranted) {
         await Notifications.requestPermissionsAsync();
       }
 
-      const { granted: fgGranted } = await getForegroundPermissionsAsync();
+      const { granted: fgGranted } =
+        await Location.getForegroundPermissionsAsync();
       if (!fgGranted) {
-        await requestForegroundPermissionsAsync();
-        await requestBackgroundPermissionsAsync();
+        setMsg("Permission to access location was denied");
+        await Location.requestForegroundPermissionsAsync();
+        await Location.requestBackgroundPermissionsAsync();
       }
+
+      await _askPermission();
+      //   let location = await Location.getCurrentPositionAsync({});
+      //   text = JSON.stringify(location);
+
+      //   console.log("location: " + text);
 
       const geofences = [
         {
@@ -169,10 +239,8 @@ export default function Trial() {
           notifyOnExit: true,
         },
       ];
-      await startGeofencingAsync("GEOFENCE_TASK", geofences);
-    };
-
-    setUp();
+      await Location.startGeofencingAsync("GEOFENCE_TASK", geofences);
+    })();
   }, []);
 
   const checkLocationHandler = () => {
@@ -183,10 +251,11 @@ export default function Trial() {
         await Notifications.requestPermissionsAsync();
       }
 
-      const { granted: fgGranted } = await getForegroundPermissionsAsync();
+      const { granted: fgGranted } =
+        await Location.getForegroundPermissionsAsync();
       if (!fgGranted) {
-        await requestForegroundPermissionsAsync();
-        await requestBackgroundPermissionsAsync();
+        await Location.requestForegroundPermissionsAsync();
+        await Location.requestBackgroundPermissionsAsync();
       }
 
       const geofences = [
@@ -199,7 +268,7 @@ export default function Trial() {
           notifyOnExit: true,
         },
       ];
-      await startGeofencingAsync("GEOFENCE_TASK", geofences);
+      await Location.startGeofencingAsync("GEOFENCE_TASK", geofences);
     };
 
     setUp();
@@ -207,7 +276,8 @@ export default function Trial() {
 
   return (
     <View style={styles.container}>
-      {isLoading ? <Text>App is Loading</Text> : <Text>Loading done</Text>}
+      {isLoading ? <Text>App is Loading...</Text> : <Text>Location Details</Text>}
+      <Text>{msg}</Text>
       <Button title="Check Location" onPress={checkLocationHandler}></Button>
     </View>
   );

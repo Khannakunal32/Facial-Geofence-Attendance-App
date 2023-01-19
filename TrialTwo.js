@@ -39,11 +39,27 @@ export default function TrialTwo() {
   // Start location tracking in foreground
   const startForegroundUpdate = async () => {
     // Check if foreground permission is granted
-    const { granted } = await Location.getForegroundPermissionsAsync();
-    if (!granted) {
-      console.log("location tracking denied");
-      return;
+
+    // const { granted } = await Location.getForegroundPermissionsAsync();
+    // if (!granted) {
+    //   console.log("location tracking denied");
+    //   return;
+    // }
+
+    // let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    // if (status !== 'granted') {
+    //   alert('The request was denied');
+    // }else{
+    try {
+      let location = await Location.getCurrentPositionAsync({});
+      // do something with location
+    } catch (e) {
+      alert(
+        "We could not find your position. Please make sure your location service provider is on"
+      );
+      console.log("Error while trying to get location: ", e);
     }
+    // }
 
     // Make sure that foreground location tracking is not running
     foregroundSubscription?.remove();

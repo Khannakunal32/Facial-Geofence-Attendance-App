@@ -16,12 +16,12 @@ export default function App() {
     //   <StatusBar style="auto" />
     // </View>
     // </ScrollView>
-
-    <ScrollView>
+    
+    <View style={styles.container} >
       <Trial></Trial>
        <TrialTwo></TrialTwo>
-       <TrialThree></TrialThree>
-      </ScrollView>
+       {/* <TrialThree></TrialThree> */}
+      </View>
   );
 }
 
